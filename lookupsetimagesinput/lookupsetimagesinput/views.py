@@ -6,7 +6,7 @@ def indexPage(request):
   if request.method == "POST":
     pass
 
-return render(request,"index.html")
+  return render(request,"index.html")
 
 
   
