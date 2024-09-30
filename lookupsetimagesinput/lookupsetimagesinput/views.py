@@ -2,10 +2,32 @@ from django.shortcuts import render, redirect
 from django.http import HttpRequest
 from django.contrib import messages
 from .ImageDetection import process_image
+from .WikiLinks import generate_wikipedia_links
 
-def LookUp(request,context):
-  print(process_image(context["Images"][0]))
-  return render(request,"LookUp.html",context = context)
+def LookUp(request,context,k):
+  n = len(context["Images"])
+  uniqueLabels = {}
+  for img in context["Images"]:
+    processed = process_image(img)
+    for item in processed:
+      if item[0] not in uniqueLabels:
+        uniqueLabels[item[0]] = []
+      uniqueLabels[item[0]].append(item[1])
+
+  sortedList = []
+  for key in uniqueLabels:
+    entry = [sum(uniqueLabels[key])/n, key]
+    sortedList.append(entry)
+
+
+  sortedList = sorted(sortedList,reverse=True)
+  sortedList = sortedList[0:k]
+  objects = {}
+  for object in sortedList:
+    objects[object] = generate_wikipedia_links((object[1]))
+
+
+  return render(request,"LookUp.html",context = objects)
 
 def indexPage(request):
   messages.get_messages(request)._loaded_messages.clear()
@@ -19,8 +41,14 @@ def indexPage(request):
         messages.info(request,"No file has been entered")
         redirect(indexPage)
 
-    Imgs = {"Images" : [file1 ,file2, file3, file4]}
-    return LookUp(request,Imgs)
+    allFiles = [file1,file2,file3,file4]
+    Imgs = {"Images" : []}
+    for file in allFiles:
+      if not file:
+        continue
+      Imgs["Images"].append(file)
+
+    return LookUp(request,Imgs,3)
   
   return render(request,"index.html")
 

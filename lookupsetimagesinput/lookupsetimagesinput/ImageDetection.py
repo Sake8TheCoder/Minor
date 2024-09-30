@@ -2,6 +2,8 @@ import os
 from ultralytics import YOLO
 import cv2
 import numpy as np
+from django.core.files.uploadedfile import InMemoryUploadedFile
+
 
 model = YOLO("yolov8l.pt")
 class_names = [
@@ -23,17 +25,13 @@ class_names = [
 ]
 
 def process_image(img_file):
-
-    if isinstance(img_file, InMemoryUploadedFile):
-      # Read the file into a NumPy array
-        file_bytes = np.fromstring(img_file.read(), np.uint8)
-        Image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
-
-    img = cv2.imread(Image)
+    file_bytes = np.frombuffer(img_file.read(), np.uint8)
+    # Decode the byte array into an image using OpenCV
+    img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
     if img is None:
-        print(f"Error: Could not read the image from '{Image}'.")
+        print(f"Error: Could not read the image from '{img}'.")
         return
-    results = model(Image)
+    results = model(img)
     highest_conf = 0
     best_box = None
     best_class_id = None
