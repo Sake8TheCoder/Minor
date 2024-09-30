@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.http import HttpRequest
 from django.contrib import messages
-
+from .ImageDetection import process_image
 
 def LookUp(request,context):
+  print(process_image(context["Images"][0]))
   return render(request,"LookUp.html",context = context)
 
 def indexPage(request):

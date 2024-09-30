@@ -23,6 +23,7 @@ class_names = [
 ]
 
 def process_image(img_file):
+
     if isinstance(img_file, InMemoryUploadedFile):
       # Read the file into a NumPy array
         file_bytes = np.fromstring(img_file.read(), np.uint8)
