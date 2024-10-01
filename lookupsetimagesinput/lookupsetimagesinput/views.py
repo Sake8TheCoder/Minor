@@ -24,13 +24,10 @@ def LookUp(request,context,k):
   sortedList = sortedList[0:k]
   objects = {}
   for object in sortedList:
-    objects[object] = generate_wikipedia_links((object[1]))
-
-
-  return render(request,"LookUp.html",context = objects)
+      objects[object[1]] = generate_wikipedia_links(object[1])
+  return render(request,"LookUp.html",{'objects':objects})
 
 def indexPage(request):
-  messages.get_messages(request)._loaded_messages.clear()
 
   if request.method == "POST":
     file1 = request.FILES.get("Image1")
@@ -39,7 +36,7 @@ def indexPage(request):
     file4 = request.FILES.get("Image4")
     if not file1 and not file2 and not file3 and not file4:
         messages.info(request,"No file has been entered")
-        redirect(indexPage)
+        return redirect(indexPage)
 
     allFiles = [file1,file2,file3,file4]
     Imgs = {"Images" : []}

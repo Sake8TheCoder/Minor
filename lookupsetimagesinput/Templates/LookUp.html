@@ -14,19 +14,18 @@
                 <th scope="col">Wiki Links</th>
                 <th scope="col">Amazon</th>
               </tr>
-
-            <tbody>
-        {% for object in Objects %}
-          {%for link in Objects[object]%}
-            <tr>
-              <th scope="row">{{object}}</th>
-              <td>{{link}}</td>
-              <td>@mdo</td>
-            </tr>
-         {%endfor%}
-        {%endfor%}
-          </tbody>
             </thead>
+             <tbody>
+                {%for key, value in objects.items%}
+                {% for link in value%}
+                    <tr>
+                      <th scope="row">{{key}}</th>
+                      <td> <a href="{{link}}">{{link}}</a></td>
+                      <td>Amazon</td>
+                    </tr>
+                {%endfor%}
+                {%endfor%}
+            </tbody>
           </table>
     </body>
 </html>
