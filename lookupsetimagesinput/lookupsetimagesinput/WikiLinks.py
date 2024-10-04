@@ -40,12 +40,10 @@ def get_wikipedia_search_results(query, max_results=3):
         return None
 
 
-def generate_wikipedia_links(user_input, max_results=5):
-    related_links = get_wikipedia_search_results(user_input, max_results)
+def generate_wikipedia_links(user_input, max_results=3):
+    related_links = get_wikipedia_search_results(user_input, max_results = 3)
 
     if related_links:
-        print(f"Top {max_results} Wikipedia links related to '{user_input}':")
-        for idx, link in enumerate(related_links, 1):
-            print(f"{idx}. {link}")
+        return related_links
     else:
         print(f"No results found for '{user_input}'.")
