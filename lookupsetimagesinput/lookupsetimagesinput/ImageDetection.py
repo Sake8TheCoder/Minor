@@ -53,5 +53,7 @@ def process_image(img_file):
         else:
             label = "Unknown"
 
-    return listObjects
+    if listObjects:
+        return listObjects[0][0]
+    return None
     
