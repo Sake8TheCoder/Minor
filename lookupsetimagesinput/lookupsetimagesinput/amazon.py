@@ -1,32 +1,23 @@
-import amazon_paapi
-from amazon_paapi import AmazonApi
-from process_image import process_image
+import requests
+from bs4 import BeautifulSoup
+import urllib.parse
 
-ACCESS_KEY = "your-access-key"
-SECRET_KEY = "your-secret-key"
-PARTNER_TAG = "your-associate-tag"
-api = AmazonApi(
-    access_key=ACCESS_KEY,
-    secret_key=SECRET_KEY,
-    partner_tag=PARTNER_TAG,
-    country="IN"
-)
-def search_amazon_from_image(img_file):
-    detected_object = process_image(img_file)
-    if detected_object:
-        print(f"Detected object: {detected_object}")
-        try:
-            search_results = api.search_items(keywords=detected_object, search_index="All")
-            for item in search_results['Items']:
-                title = item['ItemInfo']['Title']['DisplayValue']
-                url = item['DetailPageURL']
-                price = item['Offers']['Listings'][0]['Price'][
-                    'DisplayAmount'] if 'Offers' in item else "Price not available"
-
-                print(f"Title: {title}")
-                print(f"Price: {price}")
-                print(f"URL: {url}\n")
-        except amazon_paapi.exceptions.PAAPIException as e:
-            print(f"An error occurred: {e}")
+def get_amazon_product_link(product_name):
+    search_url = "https://www.amazon.in/s?k=" + urllib.parse.quote({detected_object})
+    headers = {
+        "User-Agnt": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36"
+    }
+    response = requests.get(search_url, headers=headers)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, "html.parser")
+        product = soup.find("a", {"class": "a-link-normal", "href": True})
+        if product:
+            return product["href"]
+        else:
+            return "Product not found."
     else:
-        print("No object detected in the image.")
+        return f"Failed to fetch results, status code: {response.status_code}"
+
+product_name = "laptop"
+product_link = get_amazon_product_link(product_name)
+print("Product Link:", product_link)
