@@ -24,7 +24,9 @@ def LookUp(request,context,k):
   sortedList = sortedList[0:k]
   objects = {}
   for object in sortedList:
-      objects[object[1]] = generate_wikipedia_links(object[1])
+      objects[object[1]] = []
+      objects[object[1]].append(generate_wikipedia_links(object[1]))
+      objects[objects[1]].append(f"https://www.amazon.com/s?k={object[1]}")
   return render(request,"LookUp.html",{'objects':objects})
 
 def indexPage(request):
