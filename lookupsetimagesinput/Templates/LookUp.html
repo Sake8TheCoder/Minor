@@ -17,11 +17,13 @@
             </thead>
              <tbody>
                 {%for key, value in objects.items%}
+                {%for pair in value%}
                     <tr>
                       <th scope="row">{{key}}</th>
-                      <td> <a href="{{value[0]}}">{{value[0]}}</a></td>
-                      <td> <a href="{{value[1]}}">{{value[1]}}</a></td>
+                      <td> <a href="{{ pair[0] }}">{{ pair[0] }}</a></td>
+                      <td> <a href="{{ pair[1] }}">{{ pair[1] }}</a></td>
                     </tr>
+                {%endfor%}
                 {%endfor%}
             </tbody>
           </table>
