@@ -20,8 +20,8 @@
                 {%for pair in value%}
                     <tr>
                       <th scope="row">{{key}}</th>
-                      <td> <a href="{{ pair[0] }}">{{ pair[0] }}</a></td>
-                      <td> <a href="{{ pair[1] }}">{{ pair[1] }}</a></td>
+                      <td><a href="{{pair.0}}">{{pair.0}}</a></td>
+                      <td><a href="{{pair.1}}">{{pair.1}}</a></td>
                     </tr>
                 {%endfor%}
                 {%endfor%}
