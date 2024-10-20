@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpRequest
 from django.contrib import messages
 from .ImageDetection import process_image
+
 from .WikiLinks import generate_wikipedia_links
 
 def LookUp(request,context,k):
@@ -30,27 +31,43 @@ def LookUp(request,context,k):
       wikiLinks = generate_wikipedia_links(label)
       #pair each link with amazon link
       for link in wikiLinks:
+        
+
         item = link[31:]
         pair = [link,f"https://www.amazon.com/s?k={item}"]
         objects[label].append(pair)
   return render(request,"LookUp.html",{'objects':objects})
 
 def indexPage(request):
-
   if request.method == "POST":
     file1 = request.FILES.get("Image1")
     file2 = request.FILES.get("Image2")
     file3 = request.FILES.get("Image3")
     file4 = request.FILES.get("Image4")
+    allFiles = [file1,file2,file3,file4]
     if not file1 and not file2 and not file3 and not file4:
         messages.info(request,"No file has been entered")
         return redirect(indexPage)
-
-    allFiles = [file1,file2,file3,file4]
     Imgs = {"Images" : []}
+    illegal = {
+    "txt", "log",
+    "pdf", "doc", "docx", "odt", "rtf", "wps",
+    "xls", "xlsx", "csv", "ods",
+    "ppt", "pptx", "odp",
+    "html", "xml", "json",
+    "css",
+    "js", "py", "java", "sh", "bat",
+    "zip", "rar", "tar", "gz",
+    "md",
+    }
     for file in allFiles:
       if not file:
         continue
+
+      extension = file.name.lower().rsplit('.', 1)[-1]
+        messages.info(request,"Enter image file extensions only")
+        return redirect(indexPage)
+      
       Imgs["Images"].append(file)
 
     return LookUp(request,Imgs,3)
@@ -59,3 +76,4 @@ def indexPage(request):
 
 
   
+
