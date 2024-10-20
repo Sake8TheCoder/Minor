@@ -63,9 +63,6 @@ def indexPage(request):
         continue
 
       extension = file.name.lower().rsplit('.', 1)[-1]
-
-      if extension in illegal:
-        print(extension)
         messages.info(request,"Enter image file extensions only")
         return redirect(indexPage)
       
@@ -77,3 +74,4 @@ def indexPage(request):
 
 
   
+
