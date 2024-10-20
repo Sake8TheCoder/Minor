@@ -31,7 +31,9 @@ def LookUp(request,context,k):
       wikiLinks = generate_wikipedia_links(label)
       #pair each link with amazon link
       for link in wikiLinks:
-        item = link[30:]
+        
+
+        item = link[31:]
         pair = [link,f"https://www.amazon.com/s?k={item}"]
         objects[label].append(pair)
   return render(request,"LookUp.html",{'objects':objects})
