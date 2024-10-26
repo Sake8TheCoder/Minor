@@ -2,14 +2,13 @@ from django.shortcuts import render, redirect
 from django.http import HttpRequest
 from django.contrib import messages
 from .ImageDetection import process_image
-
 from .WikiLinks import generate_wikipedia_links
-
 def LookUp(request,context,k):
   n = len(context["Images"])
   uniqueLabels = {}
   for img in context["Images"]:
     processed = process_image(img)
+    
     for item in processed:
       if item[0] not in uniqueLabels:
         uniqueLabels[item[0]] = []
@@ -33,7 +32,7 @@ def LookUp(request,context,k):
       for link in wikiLinks:
         
 
-        item = link[31:]
+        item = link[30:]
         pair = [link,f"https://www.amazon.com/s?k={item}"]
         objects[label].append(pair)
   return render(request,"LookUp.html",{'objects':objects})
@@ -63,8 +62,9 @@ def indexPage(request):
     for file in allFiles:
       if not file:
         continue
-
+      
       extension = file.name.lower().rsplit('.', 1)[-1]
+      if extension in illegal:
         messages.info(request,"Enter image file extensions only")
         return redirect(indexPage)
       
