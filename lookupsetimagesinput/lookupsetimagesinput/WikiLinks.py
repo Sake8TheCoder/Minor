@@ -3,8 +3,9 @@ from bs4 import BeautifulSoup
 import re
 import math
 from concurrent.futures import ThreadPoolExecutor, as_completed
+
 # Function to get Wikipedia search results
-def get_wikipedia_search_results(query, max_results = 30):
+def get_wikipedia_search_results(query, max_results = 20):
     search_url = "https://en.wikipedia.org/w/api.php"
 
     params = {
@@ -32,7 +33,6 @@ def get_wikipedia_search_results(query, max_results = 30):
                 title = result['title'].replace(' ', '_')  # Format title for Wikipedia URL
                 link = base_url + title
                 related_links.append(link)
-
             return related_links
         else:
             print("No search results found.")
@@ -71,11 +71,13 @@ def analyze_link(link, keyword):
     return score, link
 
 # Function to generate Wikipedia links and analyze them
-def generate_wikipedia_links(user_input, max_results = 30):
+def generate_wikipedia_links(user_input, max_results = 20):
     related_links = get_wikipedia_search_results(user_input, max_results)
 
     if related_links:
         results = []  # List to store results for sorting
+        allLinks = [related_links[0]]
+        related_links.remove(related_links[0])
         with ThreadPoolExecutor() as executor:
             future_to_link = {executor.submit(analyze_link, link, user_input): link for link in related_links}
             for future in as_completed(future_to_link):
@@ -83,8 +85,7 @@ def generate_wikipedia_links(user_input, max_results = 30):
                 results.append((score, link))
 
         results = sorted(results,reverse=True)
-        allLinks = []
-        for score,link in results[0:3]:
+        for score,link in results[0:2]:
          allLinks.append(link)
         return allLinks
     else:
