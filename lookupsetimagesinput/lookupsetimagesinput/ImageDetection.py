@@ -1,33 +1,43 @@
-import os
-from ultralytics import YOLO
 import cv2
 import numpy as np
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
-model = YOLO("yolov8l.pt")
-class_names = model.names
+net = cv2.dnn.readNetFromCaffe("deploy.prototxt", "mobilenet_iter_73000.caffemodel")
 
+with open("class_names.txt", "rt") as f:
+    class_names = f.read().strip().split("\n")
 
 def process_image(img_file):
     file_bytes = np.frombuffer(img_file.read(), np.uint8)
     img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+    
     if img is None:
-        print(f"Error: Could not read the image from '{img}'.")
+        print(f"Error: Could not read the image from '{img_file}'.")
         return
-    results = model(img)
+    
+    height, width, channels = img.shape
+
+    blob = cv2.dnn.blobFromImage(img, 0.007843, (300, 300), 127.5, (127.5, 127.5, 127.5), False)
+    net.setInput(blob)
+    detections = net.forward()
+
     listObjects = []
     labels = {}
     count = 0
-    for box in results[0].boxes:
-        confidence = box.conf[0].item()
-        class_id_current = int(box.cls[0].item())
-        if class_id_current < len(class_names):
-            label = class_names[class_id_current]
-            if label in labels:
-                continue
-            labels[label] = True
-            listObjects.append([label, confidence])
-            count += 1
+    
+    for i in range(detections.shape[2]):
+        confidence = detections[0, 0, i, 2]
+        if confidence > 0.2:
+            class_id = int(detections[0, 0, i, 1])
+            label = class_names[class_id]
+            confidence_score = float(confidence)
+
+            if label not in labels:
+                labels[label] = True
+                listObjects.append((label, confidence_score))
+                count += 1
+
             if count == 3:
                 break
+
     return listObjects
