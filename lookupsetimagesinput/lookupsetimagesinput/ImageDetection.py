@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
-model = YOLO("yolov8l.pt")
+model = YOLO("yolov8x.pt")
 class_names = model.names
 
 
